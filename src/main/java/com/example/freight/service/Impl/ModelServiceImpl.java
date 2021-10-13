@@ -32,6 +32,7 @@ public class ModelServiceImpl implements IModelService {
             } catch (Exception e) {
                 throw new Exception("More than one SKU named:”" + domain.getSku() + "“，Please contact the administrator!");
             }
+
             if (model == null) {
                 //如果根据型号查询信息为空，直接将原sku赋值为报错信息
                 domain.setSku("SKU“ " + domain.getNewSku() + " ”doesn't exist in the inventory list and is not included when calculating the shipping cost");
