@@ -1,0 +1,24 @@
+server:
+    port: 8082
+
+spring:
+  servlet:
+    multipart:
+      #上传文件大小限制
+      max-file-size: 100MB
+      max-request-size: 100MB
+  datasource:
+    url: jdbc:mysql://localhost:3306/freight?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=UTC
+    username: root
+#    username: freight
+    password: 111111
+
+#配置mybatis
+mybatis:
+  #检索sql语句xml文件的目录
+  mapperLocations: classpath:mapper/*.xml
+  #搜索指定包别名，xml文件可以将返回值简写为实体类名字，不需要
+  typeAliasesPackage: com.example.freight.domain
+
+
+

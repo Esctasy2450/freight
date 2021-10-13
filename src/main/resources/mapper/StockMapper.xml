@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.freight.mapper.StockMapper">
+
+    <insert id="insertStock" parameterType="com.example.freight.domain.Stock">
+        insert into stock (sku,color,stock) values (#{sku},#{color},#{stock})
+    </insert>
+
+    <update id="updateStock" parameterType="com.example.freight.domain.Stock">
+        update stock
+        <set>
+            <if test="stock!=null">stock = #{stock}</if>
+        </set>
+        where sku = #{sku} and color = #{color}
+    </update>
+
+    <select id="selectStock" parameterType="Stock" resultType="Stock">
+        select * from stock where sku = #{sku} and color = #{color}
+    </select>
+
+    <select id="selectStockList" parameterType="Stock" resultType="Stock">
+        select * from stock where sku = #{sku}
+    </select>
+
+    <delete id="deleteStock" parameterType="Stock">
+        delete from stock where sku = #{sku} and color = #{color}
+    </delete>
+
+</mapper>

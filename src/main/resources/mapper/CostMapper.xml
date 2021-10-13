@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.freight.mapper.CostMapper">
+
+
+    <select id="selectCost" parameterType="com.example.freight.domain.Cost" resultType="java.lang.Double">
+        select price from cost where #{name} = name and weight = #{weight}
+    </select>
+
+    <select id="selectDataByName" parameterType="com.example.freight.domain.Cost" resultType="com.example.freight.domain.Cost">
+        select price from cost where #{name} = name
+    </select>
+
+</mapper>

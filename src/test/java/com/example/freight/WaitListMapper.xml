@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.cutsies.mapper.WaitListMapper">
+
+    <insert id="insertWaitList" parameterType="com.example.cutsies.domain.WaitList">
+        INSERT INTO waitlist
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            `userName`,`phone`,partySize,restaurantName,time,state
+        </trim>
+        <trim prefix="VALUES(" suffix=")" suffixOverrides=",">
+             #{userName, jdbcType=VARCHAR}
+            ,#{phone, jdbcType=VARCHAR}
+            ,#{partySize, jdbcType=INTEGER}
+            ,#{restaurantName, jdbcType=INTEGER}
+            ,#{time, jdbcType=TIMESTAMP}
+            ,#{state, jdbcType=INTEGER}
+        </trim>
+    </insert>
+
+    <select id="selectUserByPhoneAndRestaurantName" parameterType="com.example.cutsies.domain.WaitList" resultType="com.example.cutsies.domain.WaitList">
+        select * from waitlist where phone = #{phone} and restaurantName = #{restaurantName}
+    </select>
+
+    <select id="selectUserRank" parameterType="com.example.cutsies.domain.WaitList" resultType="java.lang.Integer">
+        select count(*) from waitlist where state = 0 and #{time} >= time and restaurantName = #{restaurantName}
+    </select>
+    
+    <select id="selectUserQueue" parameterType="com.example.cutsies.domain.WaitList" resultType="com.example.cutsies.domain.WaitList">
+        select * from waitlist where phone = #{phone}
+    </select>
+
+    <select id="selectAllUser" parameterType="com.example.cutsies.domain.WaitList" resultType="com.example.cutsies.domain.WaitList">
+        select * from waitlist
+    </select>
+
+    <update id="updateStateById" parameterType="com.example.cutsies.domain.WaitList">
+        update waitlist set state = #{state} where id = #{id}
+    </update>
+
+    <select id="selectRestaurantQueueNumber" parameterType="com.example.cutsies.domain.WaitList" resultType="java.lang.Integer">
+        select count(*) from waitlist where state = 0  and restaurantName = #{restaurantName}
+    </select>
+
+</mapper>
