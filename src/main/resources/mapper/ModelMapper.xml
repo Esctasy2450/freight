@@ -5,7 +5,10 @@
 <mapper namespace="com.example.freight.mapper.ModelMapper">
 
     <select id="selectWeightAndV" parameterType="com.example.freight.domain.Model" resultType="com.example.freight.domain.Model">
-        select * from model where `sku` = #{sku}
+        select * from model where `sku` in
+        <foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+            #{item.newSku}
+        </foreach>
     </select>
 
     <select id="selectModel" parameterType="com.example.freight.domain.Model" resultType="com.example.freight.domain.Model">
@@ -51,9 +54,17 @@
 
     <select id="selectStock" parameterType="Model" resultType="Model">
         select model.sku,model.type,stock.stock from
-        (select * from model where sku = #{sku}) as model
+        (select * from model where sku in
+        <foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+            #{item.newSku}
+        </foreach>
+        ) as model
         left join
-        (select * from stock where color= #{color}) as stock on model.sku=stock.sku;
+        (select * from stock where color in
+        <foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+            #{item.color}
+        </foreach>
+        ) as stock on model.sku=stock.sku;
     </select>
 
 

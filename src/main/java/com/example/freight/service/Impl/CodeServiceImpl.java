@@ -24,7 +24,7 @@ public class CodeServiceImpl {
             // 取邮编前三位并转化为Integer型,根据结果验证目的地是否存在
             name = codeMapper.selectNameByZipCode(Integer.parseInt(zipCode.substring(0, 3)));
         } catch (Exception e) {
-            throw new Exception("Wrong zip code type:" + zipCode);
+            throw new Exception("Wrong zip code type: " + zipCode);
         }
         //查询目的地是否为空
         code.setNull(StringUtils.isEmpty(name));

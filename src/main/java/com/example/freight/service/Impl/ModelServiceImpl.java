@@ -9,9 +9,7 @@ import com.example.freight.tool.TypeTool;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class ModelServiceImpl implements IModelService {
@@ -22,25 +20,59 @@ public class ModelServiceImpl implements IModelService {
     /**
      * 根据型号列表和是否组装检验信息
      */
-    public void selectModel(List<Domains> domains) throws Exception {
+    public List<Domains> selectModel(List<Domains> domains, int c) {
 
-        //先检查型号信息是否正确
+        Map<String, Integer> map = new HashMap<>();
+        //数组去重，合并总数量
         for (Domains domain : domains) {
-            Model model;
-            try {
-                    model = modelMapper.selectStock(domain.getNewSku(), domain.getColor());
-            } catch (Exception e) {
-                throw new Exception("More than one SKU named:”" + domain.getSku() + "“，Please contact the administrator!");
+            //当遍历到的sku存在map.key时，将库存相加
+            if (map.get(domain.getSku()) != null) {
+                domain.setNum(map.get(domain.getSku()) + domain.getNum());
             }
+            //sku当第一次创建map时，存数据
+            map.put(domain.getSku(), domain.getNum());
+        }
 
-            if (model == null) {
-                //如果根据型号查询信息为空，直接将原sku赋值为报错信息
-                domain.setSku("SKU“ " + domain.getNewSku() + " ”doesn't exist in the inventory list and is not included when calculating the shipping cost");
-            } else {
-                //型号正确的话将库存添加进数组
-                domain.setStock(model.getStock());
+        List<Domains> d = new ArrayList<>();
+
+        for (Domains domain : domains) {
+            //当map.value与当前库存相同时，取出该数据
+            if (map.get(domain.getSku()) == domain.getNum()) {
+                d.add(domain);
             }
         }
+
+        domains = d;
+
+        List<Model> list = modelMapper.selectStock(domains);
+        //同时遍历两个数组，domains(长)，list(短)，且list必是domains子集
+        for (int i = 0, j = 0; i < domains.size(); j++) {
+            //正常遍历list(短)时，范围内时进入
+            if (list.size() > 0 && j < list.size()) {
+                //当找到所需数据时，获取库存并开始遍历下一位
+                if (domains.get(i).getNewSku().equalsIgnoreCase(list.get(j).getSku())) {
+                    //将库存添加到原数组中
+                    domains.get(i).setStock(list.get(j).getStock());
+                    i++;
+                    j = -1;
+                    //遍历完了还没有找到到时，置为未找到
+                } else if (j == list.size() - 1) {
+                    if (c == 0) {
+                        domains.get(i).setSku("SKU“ " + domains.get(i).getSku() + " ”doesn't exist in the inventory list and is not included when calculating the shipping cost");
+                    }
+                    i++;
+                    j = -1;
+                }
+                //当list为空时，全部置为未找到
+            } else {
+                if (c == 0) {
+                    domains.get(i).setSku("SKU“ " + domains.get(i).getSku() + " ”doesn't exist in the inventory list and is not included when calculating the shipping cost");
+                }
+                i++;
+                j = -1;
+            }
+        }
+        return domains;
     }
 
     /**
@@ -52,16 +84,21 @@ public class ModelServiceImpl implements IModelService {
         double allVolume = 0D;
         int allWeight = 0;
         boolean isLong = true;
-        for (Domains s : domains) {
-            Model model;
-            //根据型号查询所有信息
-            model = modelMapper.selectWeightAndV(s.getNewSku());
 
-            if (model != null) {
+        //treeMap可以忽略大小写
+        TreeMap<String, Integer> map = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+        for (Domains s : domains) {
+            map.put(s.getNewSku(), s.getNum());
+        }
+
+        //根据型号查询所有信息
+        List<Model> list = modelMapper.selectWeightAndV(domains);
+
+            for (Model model : list) {
                 if (type && model.getType() == 1) {
                     //type为布尔型，组装时并且可以组装
                     //统一用的allVolume存体积，计算总体积， 用单个体积和一组的个数，来确定一组体积,
-                    allVolume += model.getVolume() * model.getGroupNum() * s.getNum();
+                    allVolume += model.getVolume() * model.getGroupNum() * map.get(model.getSku());
 
                     //判断是否超长,只需超长一次，加收150
                     if (isLong) {
@@ -70,7 +107,7 @@ public class ModelServiceImpl implements IModelService {
                 } else {
                     //否则就是默认选择不组装
                     //统一用的allVolume存体积,计算总体积
-                    allVolume += model.getOrdinary() * s.getNum();
+                    allVolume += model.getOrdinary() * map.get(model.getSku());
 
                     //判断是否超长,只需超长一次，加收150
                     if (isLong) {
@@ -78,9 +115,8 @@ public class ModelServiceImpl implements IModelService {
                     }
                 }
                 //计算总重量
-                allWeight += model.getWeight() * s.getNum();
+                allWeight += model.getWeight() * map.get(model.getSku());
             }
-        }
 
         m.setVolume(allVolume);
         m.setWeight(allWeight);

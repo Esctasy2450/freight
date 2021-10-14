@@ -24,7 +24,6 @@ public class CostServiceImpl implements ICostService {
     @Autowired
     ModelServiceImpl modelService;
 
-
     /**
      * 根据邮编，型号列表，是否组装，查询邮费信息
      */
@@ -44,8 +43,8 @@ public class CostServiceImpl implements ICostService {
             return resultData;
         }
 
-        //检查型号信息是否正确
-        modelService.selectModel(domains);
+        //检查型号信息是否正确，0表示获取运费标识，sku不存在时，需要进行报错
+        domains = modelService.selectModel(domains,0);
 
         //根据商品列表，获取总重量和总体积
         Model model = modelService.getVW(domains, type);

@@ -19,6 +19,9 @@ public class StockServiceImpl implements IStockService {
     @Autowired
     StockMapper stockMapper;
 
+    @Autowired
+    ModelMapper modelMapper;
+
     /**
      * 修改库存
      */
@@ -46,7 +49,7 @@ public class StockServiceImpl implements IStockService {
 
     /**
      * 根据通用型号查询所有颜色的库存
-     * */
+     */
     @Override
     public ResultData selectStockList(String sku) {
 
@@ -74,19 +77,19 @@ public class StockServiceImpl implements IStockService {
 
     /**
      * 删除库存颜色
-     * */
+     */
     @Override
     public ResultData deleteStock(String sku) {
 
         //获取去除颜色的型号
         String s = sku.substring(sku.indexOf("-") + 1);
         //获取颜色
-        String color = sku.substring(0,sku.indexOf("-"));
+        String color = sku.substring(0, sku.indexOf("-"));
 
         //当此颜色的库存存在时，删除颜色
-        if (stockMapper.selectStock(s,color) != null){
+        if (stockMapper.selectStock(s, color) != null) {
             //删除颜色
-            stockMapper.deleteStock(s,color);
+            stockMapper.deleteStock(s, color);
         }
 
         ResultData resultData = new ResultData();

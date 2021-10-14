@@ -84,8 +84,6 @@ public class TestController {
      * */
     @RequestMapping("/getText")
     public void getText(String str,HttpServletResponse response){
-//        System.out.println(str);
-
         testService.getText(str,response);
     }
 

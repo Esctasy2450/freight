@@ -3,12 +3,10 @@ package com.example.freight.service.Impl;
 import com.example.freight.controller.CostController;
 import com.example.freight.domain.Domains;
 import com.example.freight.domain.FormObject;
-import com.example.freight.domain.Model;
 import com.example.freight.domain.ResultData;
 import com.example.freight.mapper.ModelMapper;
 import com.example.freight.service.ITestService;
 import com.example.freight.tool.TypeTool;
-import com.sun.org.apache.xpath.internal.operations.Mod;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -42,6 +40,9 @@ public class TestServiceImpl implements ITestService {
     @Autowired
     ModelMapper modelMapper;
 
+    @Autowired
+    ModelServiceImpl modelServiceImpl;
+
     /**
      * 根据文件获取结果
      */
@@ -51,22 +52,26 @@ public class TestServiceImpl implements ITestService {
 
         FormObject formObject = new FormObject();
 
-        //获取数据并判断是否安装
-        formObject.setType(getIsType(sheet));
+        try {
+            //获取数据并判断是否安装
+            formObject.setType(getIsType(sheet));
 
-        //获取邮编
-        formObject.setZipCode(getCode(sheet));
+            //获取邮编
+            formObject.setZipCode(getCode(sheet));
 
-        //从工作表的，第四行开始，遍历获取数据，直到最后一行
-        formObject.setDomains(getList(sheet));
+            //从工作表的，第四行开始，遍历获取数据，直到最后一行
+            formObject.setDomains(getList(sheet));
 
-        //将处理好的数据传递至前端页面
-        ResultData resultData = new ResultData();
-        resultData.setCode(1);
-        resultData.setMsg("success");
-        resultData.setData(formObject);
-        //处理好的数据传给costController完成业务处理
-        return resultData;
+            //将处理好的数据传递至前端页面
+            ResultData resultData = new ResultData();
+            resultData.setCode(1);
+            resultData.setMsg("success");
+            resultData.setData(formObject);
+            //处理好的数据传给costController完成业务处理
+            return resultData;
+        } catch (Exception e) {
+            throw new Exception("Please fill in the information completely and in the correct format");
+        }
     }
 
     /**
@@ -138,7 +143,6 @@ public class TestServiceImpl implements ITestService {
         String sku;
         int stock;
         List<Domains> list = new ArrayList<>();
-        Model model;
 
         ResultData resultData = new ResultData();
 
@@ -153,22 +157,11 @@ public class TestServiceImpl implements ITestService {
             domains.setSku(sku);
             //将文件读取的库存赋值为新库存
             domains.setNewStock(stock);
-            try {
-                //根据文件读取的SKU查询原有库存
-                model = modelMapper.selectStock(domains.getNewSku(),domains.getColor());
-                //返回值判空校验
-                if (model == null) {
-                    domains.setStock(0);
-//                    resultData.setMsg("SKU “" + domains.getSku() + "” not found");
-//                    return resultData;
-                }else{
-                    domains.setStock(model.getStock());
-                }
-            } catch (Exception e) {
-                throw new Exception("More than one SKU named:”" + domains.getSku() + "“，Please contact the administrator!");
-            }
             list.add(domains);
         }
+
+        //批量查询库存，1为上传文件更新标识，无需查询sku是否存在
+        list = modelServiceImpl.selectModel(list,1);
 
         if (list.size() > 0) {
             resultData.setCode(1);
@@ -228,11 +221,6 @@ public class TestServiceImpl implements ITestService {
     private String getCode(Sheet sheet) throws Exception {
         Row row = sheet.getRow(1);
         Cell codeValue = row.getCell(1);
-
-        if (codeValue == null) {
-            throw new Exception("Zip code not detected");
-        }
-
         //判断邮编的数据类型，分别为文本或者数字，分别处理
         String s = codeValue.getCellTypeEnum().toString().equals("STRING") ? codeValue.getStringCellValue() : codeValue.toString();
         //去除结尾出 .0
@@ -243,7 +231,6 @@ public class TestServiceImpl implements ITestService {
      * 根据工作表的sheet，从第四行开始获取 型号 和 数量
      */
     private List<Domains> getList(Sheet sheet) throws Exception {
-
         if (sheet.getRow(3).getCell(0) == null) {
             throw new Exception("SKU not detected");
         }

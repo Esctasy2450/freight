@@ -1,6 +1,8 @@
 package com.example.freight.mapper;
 
+import com.example.freight.domain.Domains;
 import com.example.freight.domain.Model;
+import com.example.freight.domain.Stock;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -10,8 +12,9 @@ public interface ModelMapper {
 
       /**
        * 查询家具参数
-       * */
-      Model selectWeightAndV(String sku);
+       *
+       * @param sku*/
+      List<Model> selectWeightAndV(List<Domains> sku);
 
       /**
        * 验证型号是否存在
@@ -46,6 +49,6 @@ public interface ModelMapper {
       /**
        * 查询库存和验证型号信息
        * */
-      Model selectStock(String sku,String color);
+      List<Model> selectStock(List<Domains> list);
 
 }
