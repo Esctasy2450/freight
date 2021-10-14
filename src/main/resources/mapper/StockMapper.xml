@@ -4,16 +4,39 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.freight.mapper.StockMapper">
 
-    <insert id="insertStock" parameterType="com.example.freight.domain.Stock">
-        insert into stock (sku,color,stock) values (#{sku},#{color},#{stock})
+    <!--批量插入-->
+    <sql id="ColumnsList">
+        <trim suffixOverrides=",">
+                <if test="item.newSku != null">sku,</if>
+             <if test="item.color != null">color,</if>
+             <if test="item.stock != null">stock</if>
+        </trim>
+    </sql>
+    <sql id="ValuesList">
+        <trim suffixOverrides=",">
+            <if test="item.newSku != null">#{item.newSku},</if>
+            <if test="item.color != null">#{item.color},</if>
+            <if test="item.newStock != null">#{item.newStock}</if>
+        </trim>
+    </sql>
+
+    <!--测试动态批量插入成功,注意application.yml数据库设置要加上&allowMultiQueries=true,否者提示SQLSyntaxErrorException-->
+    <insert id="insertStock" parameterType="Stock" useGeneratedKeys="true">
+        <foreach item="item" index="index" collection="list" separator=";">
+            insert into stock (<include refid="ColumnsList"/>)
+            VALUES(<include refid="ValuesList"/>)
+        </foreach>
     </insert>
 
+
     <update id="updateStock" parameterType="com.example.freight.domain.Stock">
-        update stock
-        <set>
-            <if test="stock!=null">stock = #{stock}</if>
-        </set>
-        where sku = #{sku} and color = #{color}
+        <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+            update stock
+            <set>
+                <if test="item.newStock != null">stock=#{item.newStock}</if>
+            </set>
+            where sku = #{item.newSku} and color = #{item.color}
+        </foreach>
     </update>
 
     <select id="selectStock" parameterType="Stock" resultType="Stock">
@@ -27,5 +50,16 @@
     <delete id="deleteStock" parameterType="Stock">
         delete from stock where sku = #{sku} and color = #{color}
     </delete>
+
+    <select id="verifyStock" parameterType="Stock" resultType="Stock">
+        select * from stock where sku in
+        <foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+        #{item.newSku}
+        </foreach>
+        and color in
+        <foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+            #{item.color}
+        </foreach>
+    </select>
 
 </mapper>

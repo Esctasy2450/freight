@@ -9,9 +9,7 @@ import com.example.freight.service.IStockService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class StockServiceImpl implements IStockService {
@@ -28,16 +26,33 @@ public class StockServiceImpl implements IStockService {
     @Override
     public ResultData updateStock(List<Domains> domains) {
 
-        //遍历数组，取数据
-        for (Domains domain : domains) {
-            //根据SKU和颜色修改库存，重名不影响操作，
-            if (stockMapper.selectStock(domain.getNewSku(), domain.getColor()) != null) {
-                //如果查到原有记录则更新
-                stockMapper.updateStock(domain.getNewSku(), domain.getColor(), domain.getNewStock());
+        TreeMap<String, Object> map = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+        //先验证数组的值，查询对应的库存，并将查询到的值存到map中
+        List<Stock> list = stockMapper.verifyStock(domains);
+        for (Stock s : list) {
+            map.put(s.getColor() + "-" + s.getSku(), s.getStock());
+        }
+
+        List<Domains> insertStock = new ArrayList<>();
+        List<Domains> updateStock = new ArrayList<>();
+
+        //遍历数组domains，校验当前的sku对应的map，存在就插入更新队列，否则加入新增队列
+        for (Domains d : domains) {
+            if (map.get(d.getSku()) == null) {
+                insertStock.add(d);
             } else {
-                //否则为新增记录
-                stockMapper.insertStock(domain.getNewSku(), domain.getColor(), domain.getNewStock());
+                updateStock.add(d);
             }
+        }
+
+        //当新增队列不为空时，执行批量新增
+        if (insertStock.size() > 0) {
+            stockMapper.insertStock(insertStock);
+        }
+
+        //当更新队列不为空时，执行批量更新
+        if (updateStock.size() > 0) {
+            stockMapper.updateStock(updateStock);
         }
 
         ResultData resultData = new ResultData();

@@ -1,5 +1,6 @@
 package com.example.freight.mapper;
 
+import com.example.freight.domain.Domains;
 import com.example.freight.domain.Stock;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -16,12 +17,12 @@ public interface StockMapper {
     /**
      * 根据型号和颜色 更新 库存
      * */
-    void updateStock(String sku, String color, int stock);
+    void updateStock(List<Domains> list);
 
     /**
      * 根据型号和颜色 新增 库存
      * */
-    void insertStock(String sku, String color, int stock);
+    void insertStock(List<Domains> list);
 
     /**
      * 根据通用型号查询所有颜色及库存
@@ -32,5 +33,11 @@ public interface StockMapper {
      * 删除颜色
      * */
     int deleteStock(String sku, String color);
+
+    /**
+     * 批量更新库存时检测是否存在
+     * */
+    List<Stock> verifyStock(List<Domains> list);
+
 
 }
