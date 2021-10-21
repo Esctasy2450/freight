@@ -19,6 +19,19 @@ mybatis:
   mapperLocations: classpath:mapper/*.xml
   #搜索指定包别名，xml文件可以将返回值简写为实体类名字，不需要
   typeAliasesPackage: com.example.freight.domain
+  #配置mybatis日志输出
+  configuration:
+#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    #开启驼峰uName自动映射到u_name
+    map-underscore-to-camel-case: true
+
+#配置日志等级，mapper为设置mybatis日志等级
+#logging:
+#  level:
+#    com.example.freight.mapper: debug
+
+
+
 
 
 

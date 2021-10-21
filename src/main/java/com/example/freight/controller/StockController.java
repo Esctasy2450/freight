@@ -23,7 +23,6 @@ public class StockController {
      */
     @RequestMapping(value = "/updateStock", method = RequestMethod.POST)
     public ResultData updateStock(@RequestBody FormObject formObject) {
-//        System.out.println(stock);
         return stockService.updateStock(formObject.getDomains());
     }
 
