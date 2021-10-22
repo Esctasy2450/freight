@@ -94,29 +94,29 @@ public class ModelServiceImpl implements IModelService {
         //根据型号查询所有信息
         List<Model> list = modelMapper.selectWeightAndV(domains);
 
-            for (Model model : list) {
-                if (type && model.getType() == 1) {
-                    //type为布尔型，组装时并且可以组装
-                    //统一用的allVolume存体积，计算总体积， 用单个体积和一组的个数，来确定一组体积,
-                    allVolume += model.getVolume() * model.getGroupNum() * map.get(model.getSku());
+        for (Model model : list) {
+            if (type && model.getType() == 1) {
+                //type为布尔型，组装时并且可以组装
+                //统一用的allVolume存体积，计算总体积， 用单个体积和一组的个数，来确定一组体积,
+                allVolume += model.getVolume() * map.get(model.getSku());
 
-                    //判断是否超长,只需超长一次，加收150
-                    if (isLong) {
-                        isLong = TypeTool.superLong((int) model.getvWidth(), (int) model.getvHeight(), (int) model.getvLength());
-                    }
-                } else {
-                    //否则就是默认选择不组装
-                    //统一用的allVolume存体积,计算总体积
-                    allVolume += model.getOrdinary() * map.get(model.getSku());
-
-                    //判断是否超长,只需超长一次，加收150
-                    if (isLong) {
-                        isLong = TypeTool.superLong(model.getWidth(), model.getLength(), model.getHeight());
-                    }
+                //判断是否超长,只需超长一次，加收150
+                if (isLong) {
+                    isLong = TypeTool.superLong((int) model.getvWidth(), (int) model.getvHeight(), (int) model.getvLength());
                 }
-                //计算总重量
-                allWeight += model.getWeight() * map.get(model.getSku());
+            } else {
+                //否则就是默认选择不组装
+                //统一用的allVolume存体积,计算总体积
+                allVolume += (model.getOrdinary() / model.getGroupNum()) * map.get(model.getSku());
+
+                //判断是否超长,只需超长一次，加收150
+                if (isLong) {
+                    isLong = TypeTool.superLong(model.getWidth(), model.getLength(), model.getHeight());
+                }
             }
+            //计算总重量
+            allWeight += (model.getWeight() / model.getGroupNum()) * map.get(model.getSku());
+        }
 
         m.setVolume(allVolume);
         m.setWeight(allWeight);
