@@ -57,7 +57,7 @@ public class ModelServiceImpl implements IModelService {
                     j = -1;
                     //遍历完了还没有找到到时，置为未找到
                 } else if (j == list.size() - 1) {
-                    if (c == 0) {
+                    if (0 == c) {
                         domains.get(i).setSku("SKU“ " + domains.get(i).getSku() + " ”doesn't exist in the inventory list and is not included when calculating the shipping cost");
                     }
                     i++;
@@ -65,7 +65,7 @@ public class ModelServiceImpl implements IModelService {
                 }
                 //当list为空时，全部置为未找到
             } else {
-                if (c == 0) {
+                if (0 == c) {
                     domains.get(i).setSku("SKU“ " + domains.get(i).getSku() + " ”doesn't exist in the inventory list and is not included when calculating the shipping cost");
                 }
                 i++;

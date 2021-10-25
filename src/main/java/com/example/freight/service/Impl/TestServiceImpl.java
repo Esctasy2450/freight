@@ -123,7 +123,6 @@ public class TestServiceImpl implements ITestService {
             response.setHeader("Content-Disposition", "attachment; filename=" + fileName);
             workbook.write(outputStream);
             outputStream.flush();
-            outputStream.close();
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -201,6 +200,7 @@ public class TestServiceImpl implements ITestService {
         } else {
             throw new Exception("Please upload .xls /.xlsx format file!");
         }
+
         return sheet;
     }
 
@@ -218,7 +218,7 @@ public class TestServiceImpl implements ITestService {
     /**
      * 根据工作表的sheet，从获取 2B 的邮编
      */
-    private String getCode(Sheet sheet) throws Exception {
+    private String getCode(Sheet sheet) {
         Row row = sheet.getRow(1);
         Cell codeValue = row.getCell(1);
         //判断邮编的数据类型，分别为文本或者数字，分别处理
@@ -275,20 +275,24 @@ public class TestServiceImpl implements ITestService {
      */
     public static List<Domains> getSubUtil(String soap, String sku, String num) {
         List<Domains> list = new ArrayList<>();
+
         Pattern pattern = Pattern.compile(sku);// 匹配的模式
         Matcher m = pattern.matcher(soap);
+
         Pattern pattern1 = Pattern.compile(num);// 匹配的模式
         Matcher m1 = pattern1.matcher(soap);
+
         while (m.find() && m1.find()) {
             Domains domains = new Domains();
-            int i = 1;
-            if (!m.group(i).contains("-")) {
+
+            if (!m.group(1).contains("-")) {
                 break;
             }
-            domains.setSku(m.group(i));
-            domains.setNum(Integer.parseInt(m1.group(i)));
+
+            //字符串截取拆分
+            domains.setSku(m.group(1));
+            domains.setNum(Integer.parseInt(m1.group(1)));
             list.add(domains);
-            i++;
         }
         return list;
     }
