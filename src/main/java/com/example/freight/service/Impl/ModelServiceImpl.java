@@ -57,6 +57,7 @@ public class ModelServiceImpl implements IModelService {
                     j = -1;
                     //遍历完了还没有找到到时，置为未找到
                 } else if (j == list.size() - 1) {
+                    //0为手动设置的入参，在查询邮费时设0，上传更新库存时设1
                     if (0 == c) {
                         domains.get(i).setSku("SKU“ " + domains.get(i).getSku() + " ”doesn't exist in the inventory list and is not included when calculating the shipping cost");
                     }
@@ -65,6 +66,7 @@ public class ModelServiceImpl implements IModelService {
                 }
                 //当list为空时，全部置为未找到
             } else {
+                //0为手动设置的入参，在查询邮费时设0，上传更新库存时设1
                 if (0 == c) {
                     domains.get(i).setSku("SKU“ " + domains.get(i).getSku() + " ”doesn't exist in the inventory list and is not included when calculating the shipping cost");
                 }
@@ -99,21 +101,17 @@ public class ModelServiceImpl implements IModelService {
                 //type为布尔型，组装时并且可以组装
                 //统一用的allVolume存体积，计算总体积， 用单个体积和一组的个数，来确定一组体积,
                 allVolume += model.getVolume() * map.get(model.getSku());
-
-                //判断是否超长,只需超长一次，加收150
-                if (isLong) {
-                    isLong = TypeTool.superLong((int) model.getvWidth(), (int) model.getvHeight(), (int) model.getvLength());
-                }
             } else {
                 //否则就是默认选择不组装
                 //统一用的allVolume存体积,计算总体积
                 allVolume += (model.getOrdinary() / model.getGroupNum()) * map.get(model.getSku());
-
-                //判断是否超长,只需超长一次，加收150
-                if (isLong) {
-                    isLong = TypeTool.superLong(model.getWidth(), model.getLength(), model.getHeight());
-                }
             }
+
+            //判断是否超长,只需超长一次，加收150
+            if (isLong) {
+                isLong = TypeTool.superLong(model,type,model.getType());
+            }
+
             //计算总重量
             allWeight += (model.getWeight() / model.getGroupNum()) * map.get(model.getSku());
         }

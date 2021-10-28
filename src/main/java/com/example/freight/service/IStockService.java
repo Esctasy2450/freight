@@ -11,7 +11,7 @@ public interface IStockService {
     /**
      * 更新库存
      * */
-    ResultData updateStock(List<Domains> domains);
+    ResultData updateStock(List<Domains> domains) throws Exception;
 
     /**
      * 根据通用型号查询所有颜色及库存

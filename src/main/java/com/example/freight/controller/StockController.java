@@ -23,7 +23,15 @@ public class StockController {
      */
     @RequestMapping(value = "/updateStock", method = RequestMethod.POST)
     public ResultData updateStock(@RequestBody FormObject formObject) {
-        return stockService.updateStock(formObject.getDomains());
+
+        ResultData resultData = new ResultData();
+
+        try {
+            resultData = stockService.updateStock(formObject.getDomains());
+        } catch (Exception e) {
+            resultData.setMsg(e.getMessage());
+        }
+        return resultData;
     }
 
     /**
@@ -36,7 +44,7 @@ public class StockController {
 
     /**
      * 删除颜色
-     * */
+     */
     @RequestMapping(value = "deleteStock", method = RequestMethod.POST)
     public ResultData deleteStock(String sku) {
         return stockService.deleteStock(sku);

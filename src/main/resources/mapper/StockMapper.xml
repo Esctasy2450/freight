@@ -7,11 +7,12 @@
     <!--批量插入-->
     <sql id="ColumnsList">
         <trim suffixOverrides=",">
-                <if test="item.newSku != null">sku,</if>
+             <if test="item.newSku != null">sku,</if>
              <if test="item.color != null">color,</if>
              <if test="item.stock != null">stock</if>
         </trim>
     </sql>
+
     <sql id="ValuesList">
         <trim suffixOverrides=",">
             <if test="item.newSku != null">#{item.newSku},</if>

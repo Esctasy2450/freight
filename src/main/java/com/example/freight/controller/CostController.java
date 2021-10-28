@@ -20,7 +20,7 @@ public class CostController {
 
     /**
      * 根据form表单输入的信息处理数据
-     * */
+     */
     @RequestMapping("/selectCost")
     public ResultData selectCost(@RequestBody FormObject form) {
 
@@ -29,7 +29,7 @@ public class CostController {
         try {
             //根据输入列表获取产品信息
             resultData = costService.selectParameter(form.getZipCode(), form.getDomains(), form.isType());
-        }catch (Exception e){
+        } catch (Exception e) {
             resultData.setMsg(e.getMessage());
         }
         return resultData;

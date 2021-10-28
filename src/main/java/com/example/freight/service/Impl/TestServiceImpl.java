@@ -93,8 +93,8 @@ public class TestServiceImpl implements ITestService {
         }
 
         int i = 0;
-        //sssss为检测下载文件的操作，如果是批量导出，则输出下面文本，如果是匹配字符串，则跳过该步骤
-        if (!(formObject.getZipCode().equals("sssss"))) {
+        //判断邮编是否为空，如果是非空，则为批量导出，则输出下面文本，如果是空，则为从字符串里匹配型号，则跳过该步骤
+        if (formObject.getZipCode() != null) {
             //初始化表格文件的 初始文本信息
             row[0].createCell(0).setCellValue("Assemble(Y/N)");
             row[0].createCell(1).setCellValue(formObject.isType() ? "Y" : "N");
@@ -117,6 +117,7 @@ public class TestServiceImpl implements ITestService {
             i++;
         }
 
+        //下载执行数据
         try (ServletOutputStream outputStream = response.getOutputStream()) {
             String fileName = URLEncoder.encode("new.xlsx", "UTF-8");
             response.setContentType("application/vnd.ms-excel");
@@ -131,7 +132,7 @@ public class TestServiceImpl implements ITestService {
 
     /**
      * 批量更新库存
-     * */
+     */
     @Override
     public ResultData updateStock(InputStream excelFile, String fileName) throws Exception {
 
@@ -160,7 +161,7 @@ public class TestServiceImpl implements ITestService {
         }
 
         //批量查询库存，1为上传文件更新标识，无需查询sku是否存在
-        list = modelServiceImpl.selectModel(list,1);
+        list = modelServiceImpl.selectModel(list, 1);
 
         if (list.size() > 0) {
             resultData.setCode(1);
@@ -172,14 +173,13 @@ public class TestServiceImpl implements ITestService {
 
     /**
      * 匹配字符串
-     * */
+     */
     @Override
     public void getText(String str, HttpServletResponse response) {
         String sku = "class=\"itemColumn\">(.*?)</div>";
         String num = "class=\"field-quantity-inner\">(.*?)</div>";
         FormObject formObject = new FormObject();
         formObject.setDomains(getSubUtil(str, sku, num));
-        formObject.setZipCode("sssss");
         downland(formObject, response);
     }
 

@@ -25,7 +25,7 @@ public class StockServiceImpl implements IStockService {
      * 修改库存
      */
     @Override
-    public ResultData updateStock(List<Domains> domains) {
+    public ResultData updateStock(List<Domains> domains) throws Exception {
 
         //先验证数组的值，查询对应的库存，并将查询到的值存到map中
         List<Stock> list = stockMapper.verifyStock(domains);
@@ -34,19 +34,24 @@ public class StockServiceImpl implements IStockService {
         Map<String, Integer> map = list.stream().collect(Collectors.toMap(stock -> stock.getColor() + "-" + stock.getSku(), Stock::getStock, (k1, k2) -> k2));
 
         //遍历数组domains，校验当前的sku对应的map，符合条件即颜色型号为空，加入新增队列，否则加入更新队列
-        Map<Boolean,List<Domains>> m = domains.stream().collect(Collectors.partitioningBy(domain -> map.get(domain.getSku()) == null));
+        Map<Boolean, List<Domains>> m = domains.stream().collect(Collectors.partitioningBy(domain -> map.get(domain.getSku()) == null));
         List<Domains> insertStock = m.get(true);    //true为新增队列
         List<Domains> updateStock = m.get(false);   //false为更新队列
 
-        //当新增队列不为空时，执行批量新增
-        if (insertStock.size() > 0) {
-            stockMapper.insertStock(insertStock);
+        try {
+            //当新增队列不为空时，执行批量新增
+            if (insertStock.size() > 0) {
+                stockMapper.insertStock(insertStock);
+            }
+
+            //当更新队列不为空时，执行批量更新
+            if (updateStock.size() > 0) {
+                stockMapper.updateStock(updateStock);
+            }
+        } catch (Exception e) {
+            throw new Exception("Color must be specified when modifying inventory");
         }
 
-        //当更新队列不为空时，执行批量更新
-        if (updateStock.size() > 0) {
-            stockMapper.updateStock(updateStock);
-        }
 
         ResultData resultData = new ResultData();
         resultData.setCode(1);

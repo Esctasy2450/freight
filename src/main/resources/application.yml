@@ -21,7 +21,7 @@ mybatis:
   typeAliasesPackage: com.example.freight.domain
   #配置mybatis日志输出
   configuration:
-#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    #log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
     #开启驼峰uName自动映射到u_name
     map-underscore-to-camel-case: true
 
