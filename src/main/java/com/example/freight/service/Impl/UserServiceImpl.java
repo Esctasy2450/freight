@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 public class UserServiceImpl implements IUserService {
@@ -28,9 +30,13 @@ public class UserServiceImpl implements IUserService {
         User user = userMapper.userLogin(userName, password);
 
         ResultData resultData = new ResultData();
-
         resultData.setCode(user == null ? 0 : 1);
         resultData.setMsg(user == null ? "Login failed" : "Login succeeded");
+
+        if (user != null) {
+            resultData.setData(userName);
+        }
+
         return resultData;
     }
 }

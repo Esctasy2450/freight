@@ -174,7 +174,8 @@ public class ModelServiceImpl implements IModelService {
                 resultData.setMsg("This SKU already exists！");
                 return resultData;
             }
-            //数据库返回多条信息时会报错，抛出异常
+
+        //数据库返回多条信息时会报错，抛出异常
         } catch (Exception e) {
             throw new Exception("More than one SKU named:”" + model.getSku() + "“，Please contact the administrator!");
         }

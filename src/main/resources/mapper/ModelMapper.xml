@@ -4,52 +4,62 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.freight.mapper.ModelMapper">
 
-    <select id="selectWeightAndV" parameterType="com.example.freight.domain.Model" resultType="com.example.freight.domain.Model">
+    <select id="selectWeightAndV" parameterType="com.example.freight.domain.Model"
+            resultType="com.example.freight.domain.Model">
         select * from model where `sku` in
         <foreach item="item" index="index" collection="list" open="(" separator="," close=")">
             #{item.newSku}
         </foreach>
     </select>
 
-    <select id="selectModel" parameterType="com.example.freight.domain.Model" resultType="com.example.freight.domain.Model">
-        select sku,type,id from model where sku = #{sku}
+    <select id="selectModel" parameterType="com.example.freight.domain.Model"
+            resultType="com.example.freight.domain.Model">
+        select sku, type, id
+        from model
+        where sku = #{sku}
     </select>
 
     <select id="selectCount" parameterType="com.example.freight.domain.Model" resultType="java.lang.Integer">
-        select count(*) from model where sku LIKE "%"#{str}"%";
+        select count(*)
+        from model
+        where sku LIKE "%"#{str}"%";
     </select>
 
-    <select id="selectLimit" parameterType="com.example.freight.domain.Model" resultType="com.example.freight.domain.Model">
-        select * from model where sku LIKE "%"#{str}"%" limit #{start},#{num};
+    <select id="selectLimit" parameterType="com.example.freight.domain.Model"
+            resultType="com.example.freight.domain.Model">
+        select *
+        from model
+        where sku LIKE "%"#{str}"%" limit #{start}, #{num};
     </select>
 
-    <delete id="deleteModel" parameterType="com.example.freight.domain.Model" >
-        delete from model where id = #{id}
+    <delete id="deleteModel" parameterType="com.example.freight.domain.Model">
+        delete
+        from model
+        where id = #{id}
     </delete>
 
     <insert id="insertModel" parameterType="com.example.freight.domain.Model">
-        insert into model (sku,type,groupNum,weight,length ,width,height,ordinary,volume,vLength ,vWidth,vHeight,stock)
-        values (#{sku}, #{type}, #{groupNum}, #{weight}, #{length} , #{width}, #{height}, #{ordinary},#{volume}, #{vLength} , #{vWidth}, #{vHeight}, #{stock})
+        insert into model (sku, type, groupNum, weight, length, width, height, ordinary, volume, vLength, vWidth,vHeight)
+        values (#{sku}, #{type}, #{groupNum}, #{weight}, #{length}, #{width}, #{height}, #{ordinary}, #{volume},#{vLength}, #{vWidth}, #{vHeight})
     </insert>
 
     <update id="updateModel" parameterType="com.example.freight.domain.Model">
         update model
-                <set>
-                    <if test="sku != null">`sku` = #{sku},</if>
-                    <if test="type != null">`type` = #{type},</if>
-                    <if test="groupNum != null">groupNum = #{groupNum},</if>
-                    <if test="weight != null">weight = #{weight},</if>
-                    <if test="length!=null"> length = #{length},</if>
-                    <if test="width!=null"> width = #{width},</if>
-                    <if test="height!=null"> height = #{height},</if>
-                    <if test="ordinary!=null"> ordinary = #{ordinary},</if>
-                    <if test="volume!=null"> volume = #{volume},</if>
-                    <if test="vLength!=null"> vLength = #{vLength},</if>
-                    <if test="vWidth!=null"> vWidth = #{vWidth},</if>
-                    <if test="vHeight!=null">vHeight = #{vHeight},</if>
-                    <if test="stock!=null">stock = #{stock}</if>
-                </set>
-            where id = #{id}
+        <set>
+            <if test="sku != null">`sku` = #{sku},</if>
+            <if test="type != null">`type` = #{type},</if>
+            <if test="groupNum != null">groupNum = #{groupNum},</if>
+            <if test="weight != null">weight = #{weight},</if>
+            <if test="length!=null">length = #{length},</if>
+            <if test="width!=null">width = #{width},</if>
+            <if test="height!=null">height = #{height},</if>
+            <if test="ordinary!=null">ordinary = #{ordinary},</if>
+            <if test="volume!=null">volume = #{volume},</if>
+            <if test="vLength!=null">vLength = #{vLength},</if>
+            <if test="vWidth!=null">vWidth = #{vWidth},</if>
+            <if test="vHeight!=null">vHeight = #{vHeight},</if>
+        </set>
+        where id = #{id}
     </update>
 
     <select id="selectStock" parameterType="Model" resultType="Model">
@@ -66,9 +76,6 @@
         </foreach>
         ) as stock on model.sku=stock.sku;
     </select>
-
-
-
 
 
 </mapper>
