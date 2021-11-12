@@ -29,7 +29,8 @@
             resultType="com.example.freight.domain.Model">
         select *
         from model
-        where sku LIKE "%"#{str}"%" limit #{start}, #{num};
+        where sku LIKE "%"#{str}"%" limit #{start}
+            , #{num};
     </select>
 
     <delete id="deleteModel" parameterType="com.example.freight.domain.Model">
@@ -39,8 +40,10 @@
     </delete>
 
     <insert id="insertModel" parameterType="com.example.freight.domain.Model">
-        insert into model (sku, type, groupNum, weight, length, width, height, ordinary, volume, vLength, vWidth,vHeight)
-        values (#{sku}, #{type}, #{groupNum}, #{weight}, #{length}, #{width}, #{height}, #{ordinary}, #{volume},#{vLength}, #{vWidth}, #{vHeight})
+        insert into model (sku, type, groupNum, weight, length, width, height, ordinary, volume, vLength, vWidth,
+                           vHeight)
+        values (#{sku}, #{type}, #{groupNum}, #{weight}, #{length}, #{width}, #{height}, #{ordinary}, #{volume},
+                #{vLength}, #{vWidth}, #{vHeight})
     </insert>
 
     <update id="updateModel" parameterType="com.example.freight.domain.Model">
@@ -62,20 +65,23 @@
         where id = #{id}
     </update>
 
-    <select id="selectStock" parameterType="Model" resultType="Model">
+    <select id="selectStock" parameterType="Domains" resultType="Model">
         select model.sku,model.type,stock.stock from
-        (select * from model where sku in
-        <foreach item="item" index="index" collection="list" open="(" separator="," close=")">
-            #{item.newSku}
-        </foreach>
+        ( select * from model
+        <where>
+            <foreach item="item" index="index" collection="list" open="" separator="or" close="">
+                sku = #{item.newSku}
+            </foreach>
+        </where>
         ) as model
         left join
-        (select * from stock where color in
-        <foreach item="item" index="index" collection="list" open="(" separator="," close=")">
-            #{item.color}
-        </foreach>
-        ) as stock on model.sku=stock.sku;
+        ( select * from stock
+        <where>
+            <foreach item="item" index="index" collection="list" open="" separator="or" close="">
+                color = #{item.color}
+            </foreach>
+        </where>
+        ) as stock on model.sku = stock.sku
+
     </select>
-
-
 </mapper>

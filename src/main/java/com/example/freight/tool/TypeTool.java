@@ -1,10 +1,6 @@
 package com.example.freight.tool;
 
 import com.example.freight.domain.Model;
-import org.apache.poi.ss.usermodel.Cell;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class TypeTool {
 
@@ -13,7 +9,7 @@ public class TypeTool {
         return str.equals("y") || str.equals("Y") || str.equals("yes") || str.equals("YES");
     }
 
-    public static boolean superLong(Model model,boolean type,int i) {
+    public static boolean superLong(Model model, boolean type, int i) {
         if (type && 1 == i){
             return model.getvHeight() <=48 && model.getvLength() <= 48 && model.getvWidth() <= 48;
         }else {

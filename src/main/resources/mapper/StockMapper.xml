@@ -7,9 +7,9 @@
     <!--批量插入-->
     <sql id="ColumnsList">
         <trim suffixOverrides=",">
-             <if test="item.newSku != null">sku,</if>
-             <if test="item.color != null">color,</if>
-             <if test="item.stock != null">stock</if>
+            <if test="item.newSku != null">sku,</if>
+            <if test="item.color != null">color,</if>
+            <if test="item.stock != null">stock</if>
         </trim>
     </sql>
 
@@ -41,26 +41,34 @@
     </update>
 
     <select id="selectStock" parameterType="Stock" resultType="Stock">
-        select * from stock where sku = #{sku} and color = #{color}
+        select *
+        from stock
+        where sku = #{sku}
+          and color = #{color}
     </select>
 
     <select id="selectStockList" parameterType="Stock" resultType="Stock">
-        select * from stock where sku = #{sku}
+        select *
+        from stock
+        where sku = #{sku}
     </select>
 
     <delete id="deleteStock" parameterType="Stock">
-        delete from stock where sku = #{sku} and color = #{color}
+        delete
+        from stock
+        where sku = #{sku}
+          and color = #{color}
     </delete>
 
     <select id="verifyStock" parameterType="Stock" resultType="Stock">
-        select * from stock where sku in
-        <foreach item="item" index="index" collection="list" open="(" separator="," close=")">
-        #{item.newSku}
-        </foreach>
-        and color in
-        <foreach item="item" index="index" collection="list" open="(" separator="," close=")">
-            #{item.color}
-        </foreach>
+        select * from stock
+        <where>
+            <foreach item="item" index="index" collection="list" open="" separator="or" close="">
+                sku = #{item.newSku}
+                and
+                color = #{item.color}
+            </foreach>
+        </where>
     </select>
 
 </mapper>

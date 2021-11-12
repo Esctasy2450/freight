@@ -34,7 +34,9 @@ public class StockServiceImpl implements IStockService {
         Map<String, Integer> map = list.stream().collect(Collectors.toMap(stock -> stock.getColor() + "-" + stock.getSku(), Stock::getStock, (k1, k2) -> k2));
 
         //遍历数组domains，校验当前的sku对应的map，符合条件即颜色型号为空，加入新增队列，否则加入更新队列
-        Map<Boolean, List<Domains>> m = domains.stream().collect(Collectors.partitioningBy(domain -> map.get(domain.getSku()) == null));
+        Map<Boolean, List<Domains>> m = domains.stream()
+                .collect(Collectors
+                        .partitioningBy(domain -> map.get(domain.getSku()) == null));
         List<Domains> insertStock = m.get(true);    //true为新增队列
         List<Domains> updateStock = m.get(false);   //false为更新队列
 

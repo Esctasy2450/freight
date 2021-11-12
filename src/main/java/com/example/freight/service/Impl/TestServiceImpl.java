@@ -16,7 +16,6 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -27,10 +26,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * @author: curry
- * @Date: 2018/8/16
- */
+
 @Service
 public class TestServiceImpl implements ITestService {
 
@@ -48,6 +44,7 @@ public class TestServiceImpl implements ITestService {
      */
     public ResultData insertChoice(InputStream excelFile, String fileName) throws Exception {
 
+        //验证文件类型，类型正确创建sheet
         Sheet sheet = this.getWorkbook(excelFile, fileName);
 
         FormObject formObject = new FormObject();
@@ -93,7 +90,7 @@ public class TestServiceImpl implements ITestService {
         }
 
         int i = 0;
-        //判断邮编是否为空，如果是非空，则为批量导出，则输出下面文本，如果是空，则为从字符串里匹配型号，则跳过该步骤
+        //判断邮编是否为空，如果是非空，则为批量导出，则输出下面文本，如果是空，则为从字符串里匹配型号，跳过该步骤
         if (formObject.getZipCode() != null) {
             //初始化表格文件的 初始文本信息
             row[0].createCell(0).setCellValue("Assemble(Y/N)");
@@ -110,7 +107,7 @@ public class TestServiceImpl implements ITestService {
             i = 3;
         }
 
-        //从第四行开始，遍历输出型号和数量
+        //从第一行或第四行开始，遍历输出型号和数量
         for (Domains domains : formObject.getDomains()) {
             row[i].createCell(0).setCellValue(domains.getSku());
             row[i].createCell(1).setCellValue(domains.getNum());
@@ -150,8 +147,16 @@ public class TestServiceImpl implements ITestService {
         for (int i = 1; i <= sheet.getLastRowNum(); i++) {
             Row row = sheet.getRow(i);
 
-            sku = row.getCell(0).getCellTypeEnum().toString().equals("STRING") ? row.getCell(0).getStringCellValue() : String.valueOf((int) row.getCell(0).getNumericCellValue());
-            stock = row.getCell(1).getCellTypeEnum().toString().equals("STRING") ? Integer.parseInt(row.getCell(1).toString()) : (int) row.getCell(1).getNumericCellValue();
+            //读取单元格数据类型
+            //sku string类型直接读取，int类型需转string
+            sku = row.getCell(0).getCellTypeEnum().toString().equals("STRING")
+                    ? row.getCell(0).getStringCellValue()
+                    : String.valueOf((int) row.getCell(0).getNumericCellValue());
+
+            //stock int，string类型需转int
+            stock = row.getCell(1).getCellTypeEnum().toString().equals("STRING")
+                    ? Integer.parseInt(row.getCell(1).toString())
+                    : (int) row.getCell(1).getNumericCellValue();
 
             Domains domains = new Domains();
             domains.setSku(sku);
@@ -200,7 +205,6 @@ public class TestServiceImpl implements ITestService {
         } else {
             throw new Exception("Please upload .xls /.xlsx format file!");
         }
-
         return sheet;
     }
 
@@ -270,8 +274,8 @@ public class TestServiceImpl implements ITestService {
     /**
      * 正则表达式匹配两个指定字符串中间的内容
      *
-     * @param soap
-     * @return
+     * @param "QBCode"，匹配sku的正则，匹配stock的正则
+     * @return domainList
      */
     public static List<Domains> getSubUtil(String soap, String sku, String num) {
         List<Domains> list = new ArrayList<>();
@@ -280,9 +284,9 @@ public class TestServiceImpl implements ITestService {
         Matcher m = pattern.matcher(soap);
 
         Pattern pattern1 = Pattern.compile(num);// 匹配的模式
-        Matcher m1 = pattern1.matcher(soap);
+        Matcher n = pattern1.matcher(soap);
 
-        while (m.find() && m1.find()) {
+        while (m.find() && n.find()) {
             Domains domains = new Domains();
 
             if (!m.group(1).contains("-")) {
@@ -291,7 +295,7 @@ public class TestServiceImpl implements ITestService {
 
             //字符串截取拆分
             domains.setSku(m.group(1));
-            domains.setNum(Integer.parseInt(m1.group(1)));
+            domains.setNum(Integer.parseInt(n.group(1)));
             list.add(domains);
         }
         return list;

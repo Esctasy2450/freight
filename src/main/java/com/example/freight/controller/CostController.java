@@ -20,6 +20,9 @@ public class CostController {
 
     /**
      * 根据form表单输入的信息处理数据
+     *
+     * @Prarm formObject表单
+     * @Return 处理成功的运费信息
      */
     @RequestMapping("/selectCost")
     public ResultData selectCost(@RequestBody FormObject form) {

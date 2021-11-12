@@ -21,6 +21,9 @@ public class ModelController {
 
     /**
      * 分页查询外加搜索框模糊查询，搜索框为空时，查所有
+     *
+     * @param "当前页数page"，每页信息条数num，搜索的内容str
+     * @return 查询到的型号列表
      */
     @RequestMapping("/modelLimit")
     public ResultData modelLimit(int page, int num, String str) {
@@ -29,6 +32,9 @@ public class ModelController {
 
     /**
      * 新增model
+     *
+     * @param "sku的完整信息"
+     * @return 操作信息
      */
     @RequestMapping(value = "/insert", method = RequestMethod.POST)
     public ResultData insertModel(Model model) {

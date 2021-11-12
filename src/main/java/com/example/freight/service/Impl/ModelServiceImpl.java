@@ -109,7 +109,7 @@ public class ModelServiceImpl implements IModelService {
 
             //判断是否超长,只需超长一次，加收150
             if (isLong) {
-                isLong = TypeTool.superLong(model,type,model.getType());
+                isLong = TypeTool.superLong(model, type, model.getType());
             }
 
             //计算总重量
@@ -175,7 +175,7 @@ public class ModelServiceImpl implements IModelService {
                 return resultData;
             }
 
-        //数据库返回多条信息时会报错，抛出异常
+            //数据库返回多条信息时会报错，抛出异常
         } catch (Exception e) {
             throw new Exception("More than one SKU named:”" + model.getSku() + "“，Please contact the administrator!");
         }

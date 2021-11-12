@@ -1,6 +1,5 @@
 package com.example.freight.controller;
 
-import com.example.freight.domain.Domains;
 import com.example.freight.domain.FormObject;
 import com.example.freight.domain.ResultData;
 import com.example.freight.service.ITestService;
