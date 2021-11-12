@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class ModelServiceImpl implements IModelService {
@@ -25,7 +26,7 @@ public class ModelServiceImpl implements IModelService {
         Map<String, Integer> map = new HashMap<>();
         //数组去重，合并总数量
         for (Domains domain : domains) {
-            //当遍历到的sku存在map.key时，将库存相加
+            //当遍历到的sku存在map.key时，将数量相加
             if (map.get(domain.getSku()) != null) {
                 domain.setNum(map.get(domain.getSku()) + domain.getNum());
             }
@@ -33,48 +34,29 @@ public class ModelServiceImpl implements IModelService {
             map.put(domain.getSku(), domain.getNum());
         }
 
+        //将map值取出存放到list
         List<Domains> d = new ArrayList<>();
-
         for (Domains domain : domains) {
-            //当map.value与当前库存相同时，取出该数据
+            //当map.value与当前数量相同时，取出该数据
             if (map.get(domain.getSku()) == domain.getNum()) {
                 d.add(domain);
             }
         }
 
-        domains = d;
+        //将list转为map，方便匹配
+        List<Model> list = modelMapper.selectStock(d);
+        Map<String, Integer> m = list.stream().collect(Collectors.toMap(model -> model.getColor() + "-" + model.getSku(), Model::getStock, (k1, k2) -> k2));
 
-        List<Model> list = modelMapper.selectStock(domains);
-        //同时遍历两个数组，domains(长)，list(短)，且list必是domains子集
-        for (int i = 0, j = 0; i < domains.size(); j++) {
-            //正常遍历list(短)时，范围内时进入
-            if (list.size() > 0 && j < list.size()) {
-                //当找到所需数据时，获取库存并开始遍历下一位
-                if (domains.get(i).getNewSku().equalsIgnoreCase(list.get(j).getSku())) {
-                    //将库存添加到原数组中
-                    domains.get(i).setStock(list.get(j).getStock());
-                    i++;
-                    j = -1;
-                    //遍历完了还没有找到到时，置为未找到
-                } else if (j == list.size() - 1) {
-                    //0为手动设置的入参，在查询邮费时设0，上传更新库存时设1
-                    if (0 == c) {
-                        domains.get(i).setSku("SKU“ " + domains.get(i).getSku() + " ”doesn't exist in the inventory list and is not included when calculating the shipping cost");
-                    }
-                    i++;
-                    j = -1;
-                }
-                //当list为空时，全部置为未找到
-            } else {
-                //0为手动设置的入参，在查询邮费时设0，上传更新库存时设1
-                if (0 == c) {
-                    domains.get(i).setSku("SKU“ " + domains.get(i).getSku() + " ”doesn't exist in the inventory list and is not included when calculating the shipping cost");
-                }
-                i++;
-                j = -1;
+        //检验型号是否存在于库中，没有输出报错信息
+        for (Domains domain : d) {
+            if (m.get(domain.getSku().toUpperCase()) != null) {
+                domain.setStock(m.get(domain.getSku().toUpperCase()));
+            } else if (0 == c) {
+                domain.setSku("SKU“ " + domain.getSku() + " ”doesn't exist in the inventory list and is not included when calculating the shipping cost");
             }
         }
-        return domains;
+
+        return d;
     }
 
     /**
@@ -181,7 +163,7 @@ public class ModelServiceImpl implements IModelService {
         }
 
         //一切正常则执行操作，新增SKU
-        model.setVolume(model.getvLength() * model.getvWidth() * model.getvHeight());
+        model.setVolume(model.getVLength() * model.getVWidth() * model.getVHeight());
         model.setOrdinary(model.getLength() * model.getWidth() * model.getHeight());
         int i = modelMapper.insertModel(model);
         resultData.setCode(i);
@@ -210,7 +192,7 @@ public class ModelServiceImpl implements IModelService {
         }
 
         //一切正常则执行操作，修改SKU
-        model.setVolume(model.getvLength() * model.getvWidth() * model.getvHeight());
+        model.setVolume(model.getVLength() * model.getVWidth() * model.getVHeight());
         model.setOrdinary(model.getLength() * model.getWidth() * model.getHeight());
         int i = modelMapper.updateModel(model);
         resultData.setCode(i);

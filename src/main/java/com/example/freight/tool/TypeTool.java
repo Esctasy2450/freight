@@ -11,7 +11,7 @@ public class TypeTool {
 
     public static boolean superLong(Model model, boolean type, int i) {
         if (type && 1 == i){
-            return model.getvHeight() <=48 && model.getvLength() <= 48 && model.getvWidth() <= 48;
+            return model.getVLength() <=48 && model.getVWidth() <= 48 && model.getVHeight() <= 48;
         }else {
             return model.getWidth() <= 48 && model.getLength() <= 48 && model.getHeight() <= 48;
         }
@@ -24,6 +24,6 @@ public class TypeTool {
         if (model.getLength() == 0 || model.getWidth() == 0 || model.getHeight() == 0 || model.getWeight() == 0 || model.getGroupNum() == 0)
             return true;
 
-            return model.getType() == 1 && (model.getvLength() == 0D || model.getvWidth() == 0D || model.getvHeight() == 0D);
+            return model.getType() == 1 && (model.getVLength() == 0D || model.getVWidth() == 0D || model.getVHeight() == 0D);
     }
 }

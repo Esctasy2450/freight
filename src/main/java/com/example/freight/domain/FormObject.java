@@ -1,36 +1,35 @@
 package com.example.freight.domain;
 
+import lombok.Data;
+
 import java.util.List;
 
+@Data
+
+/**
+ * 用于接收表单数据
+ * */
 public class FormObject {
+
+    /**
+     * 邮编
+     * */
     private String zipCode;
+
+    /**
+     * 是否组装标志
+     * */
     private boolean type;
+
+    /**
+     * 接收表单数组
+     * */
     private List<Domains> domains;
+
+    /**
+     *
+     * */
     private int code;
-
-    public int getCode() {
-        return code;
-    }
-
-    public void setCode(int code) {
-        this.code = code;
-    }
-
-    public String getZipCode() {
-        return zipCode;
-    }
-
-    public List<Domains> getDomains() {
-        return domains;
-    }
-
-    public void setDomains(List<Domains> domains) {
-        this.domains = domains;
-    }
-
-    public void setZipCode(String zipCode) {
-        this.zipCode = zipCode;
-    }
 
     public boolean isType() {
         return type;
@@ -40,14 +39,4 @@ public class FormObject {
         this.type = type;
     }
 
-
-    @Override
-    public String toString() {
-        return "FormObject{" +
-                "zipCode='" + zipCode + '\'' +
-                ", type=" + type +
-                ", domains=" + domains +
-                ", code=" + code +
-                '}';
-    }
 }

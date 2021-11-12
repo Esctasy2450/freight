@@ -1,11 +1,22 @@
 package com.example.freight.domain;
 
+import lombok.Data;
+
+@Data
+
+/**
+ * 邮编信息类
+ * */
 public class Code {
 
-    private int id;
+    /**
+     * 目的地
+     * */
     private String destination;
-    private int min;
-    private int max;
+
+    /**
+     * 判断邮编是否正常
+     * */
     private boolean isNull = true;
 
     public boolean isNull() {
@@ -16,45 +27,4 @@ public class Code {
         isNull = aNull;
     }
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getDestination() {
-        return destination;
-    }
-
-    public void setDestination(String destination) {
-        this.destination = destination;
-    }
-
-    public int getMin() {
-        return min;
-    }
-
-    public void setMin(int min) {
-        this.min = min;
-    }
-
-    public int getMax() {
-        return max;
-    }
-
-    public void setMax(int max) {
-        this.max = max;
-    }
-
-    @Override
-    public String toString() {
-        return "code{" +
-                "id=" + id +
-                ", destination='" + destination + '\'' +
-                ", min=" + min +
-                ", max=" + max +
-                '}';
-    }
 }

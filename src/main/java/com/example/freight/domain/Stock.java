@@ -1,64 +1,32 @@
 package com.example.freight.domain;
 
-import org.springframework.util.StringUtils;
+import lombok.Data;
 
+@Data
+
+/**
+ * 库存信息类
+ * */
 public class Stock {
 
+    /**
+     * 型号
+     * */
     private String sku;
-    private String color;
-    private int stock;
-    private int newStock;
 
-    public String getNewSku() {
-        if(!StringUtils.isEmpty(sku) && sku.contains("-")){
-            return sku.substring(sku.indexOf("-") + 1);
-        } else {
-            return sku;
-        }
-    }
+    /**
+     * 颜色
+     * */
+    public String color;
 
-    public void setNewSku(String newSku) {
-    }
+    /**
+     * 库存
+     * */
+    public int stock;
 
-    public int getNewStock() {
-        return newStock;
-    }
+    /**
+     * 新库存
+     * */
+    public int newStock;
 
-    public void setNewStock(int newStock) {
-        this.newStock = newStock;
-    }
-
-    public String getSku() {
-        return sku;
-    }
-
-    public void setSku(String sku) {
-        this.sku = sku;
-    }
-
-    public String getColor() {
-        return color;
-    }
-
-    public void setColor(String color) {
-        this.color = color;
-    }
-
-    public int getStock() {
-        return stock;
-    }
-
-    public void setStock(int stock) {
-        this.stock = stock;
-    }
-
-    @Override
-    public String toString() {
-        return "Stock{" +
-                "sku='" + sku + '\'' +
-                ", color='" + color + '\'' +
-                ", stock=" + stock +
-                ", newStock=" + newStock +
-                '}';
-    }
 }

@@ -30,7 +30,7 @@ public class CostServiceImpl implements ICostService {
     @Override
     public ResultData selectParameter(String zipCode, List<Domains> domains, boolean type) throws Exception {
 
-        Map<String, Object> map = new HashMap<>();
+
 
         ResultData resultData = new ResultData();
 
@@ -55,6 +55,7 @@ public class CostServiceImpl implements ICostService {
         //邮费
         double cost = selectCost(code.getDestination(), s, i, model.isSize());
 
+        Map<String, Object> map = new HashMap<>();
         //最终成功时，设置前端接收的参数
         map.put("cost", cost);                              //邮费
         //取总体积，换算单位

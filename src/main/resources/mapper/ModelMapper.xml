@@ -66,7 +66,7 @@
     </update>
 
     <select id="selectStock" parameterType="Domains" resultType="Model">
-        select model.sku,model.type,stock.stock from
+        select model.sku,model.type,stock.color,stock.stock from
         ( select * from model
         <where>
             <foreach item="item" index="index" collection="list" open="" separator="or" close="">
@@ -78,10 +78,11 @@
         ( select * from stock
         <where>
             <foreach item="item" index="index" collection="list" open="" separator="or" close="">
+                sku = #{item.newSku}
+                and
                 color = #{item.color}
             </foreach>
         </where>
         ) as stock on model.sku = stock.sku
-
     </select>
 </mapper>

@@ -36,7 +36,8 @@ public class StockServiceImpl implements IStockService {
         //遍历数组domains，校验当前的sku对应的map，符合条件即颜色型号为空，加入新增队列，否则加入更新队列
         Map<Boolean, List<Domains>> m = domains.stream()
                 .collect(Collectors
-                        .partitioningBy(domain -> map.get(domain.getSku()) == null));
+                .partitioningBy(domain -> map.get(domain.getSku()) == null));
+
         List<Domains> insertStock = m.get(true);    //true为新增队列
         List<Domains> updateStock = m.get(false);   //false为更新队列
 
@@ -53,7 +54,6 @@ public class StockServiceImpl implements IStockService {
         } catch (Exception e) {
             throw new Exception("Color must be specified when modifying inventory");
         }
-
 
         ResultData resultData = new ResultData();
         resultData.setCode(1);
