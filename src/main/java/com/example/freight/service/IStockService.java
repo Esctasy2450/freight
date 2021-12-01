@@ -2,7 +2,6 @@ package com.example.freight.service;
 
 import com.example.freight.domain.Domains;
 import com.example.freight.domain.ResultData;
-import com.example.freight.domain.Stock;
 
 import java.util.List;
 

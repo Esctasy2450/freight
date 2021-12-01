@@ -7,6 +7,7 @@ import com.example.freight.domain.ResultData;
 import com.example.freight.mapper.ModelMapper;
 import com.example.freight.service.ITestService;
 import com.example.freight.tool.TypeTool;
+import lombok.RequiredArgsConstructor;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -28,6 +29,7 @@ import java.util.regex.Pattern;
 
 
 @Service
+//@RequiredArgsConstructor
 public class TestServiceImpl implements ITestService {
 
     @Autowired
@@ -48,6 +50,7 @@ public class TestServiceImpl implements ITestService {
         Sheet sheet = this.getWorkbook(excelFile, fileName);
 
         FormObject formObject = new FormObject();
+
 
         try {
             //获取数据并判断是否安装

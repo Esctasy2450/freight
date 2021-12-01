@@ -3,6 +3,7 @@ package com.example.freight.controller;
 
 import com.example.freight.domain.*;
 import com.example.freight.service.ICostService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,10 +14,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @CrossOrigin
 @RequestMapping("/cost")
+@RequiredArgsConstructor
 public class CostController {
 
-    @Autowired
-    ICostService costService;
+//    @Autowired
+    private final ICostService costService;
 
     /**
      * 根据form表单输入的信息处理数据

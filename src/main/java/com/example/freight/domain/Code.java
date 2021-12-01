@@ -2,11 +2,10 @@ package com.example.freight.domain;
 
 import lombok.Data;
 
-@Data
-
 /**
  * 邮编信息类
  * */
+@Data
 public class Code {
 
     /**
