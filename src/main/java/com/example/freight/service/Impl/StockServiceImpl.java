@@ -6,12 +6,14 @@ import com.example.freight.domain.Stock;
 import com.example.freight.mapper.ModelMapper;
 import com.example.freight.mapper.StockMapper;
 import com.example.freight.service.IStockService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 public class StockServiceImpl implements IStockService {
 
@@ -36,21 +38,27 @@ public class StockServiceImpl implements IStockService {
         //遍历数组domains，校验当前的sku对应的map，符合条件即颜色型号为空，加入新增队列，否则加入更新队列
         Map<Boolean, List<Domains>> m = domains.stream()
                 .collect(Collectors
-                .partitioningBy(domain -> map.get(domain.getSku()) == null));
+                        .partitioningBy(domain -> map.get(domain.getSku()) == null));
 
         List<Domains> insertStock = m.get(true);    //true为新增队列
         List<Domains> updateStock = m.get(false);   //false为更新队列
 
         try {
             //当新增队列不为空时，执行批量新增
+
             if (insertStock.size() > 0) {
-                stockMapper.insertStock(insertStock);
+                for (Domains d : insertStock) {
+                            stockMapper.insertStock(d);
+                }
             }
 
             //当更新队列不为空时，执行批量更新
             if (updateStock.size() > 0) {
-                stockMapper.updateStock(updateStock);
+                for (Domains d : updateStock) {
+                           stockMapper.updateStock(d);
+                }
             }
+
         } catch (Exception e) {
             throw new Exception("Color must be specified when modifying inventory");
         }

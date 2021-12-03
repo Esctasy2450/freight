@@ -7,37 +7,33 @@
     <!--批量插入-->
     <sql id="ColumnsList">
         <trim suffixOverrides=",">
-            <if test="item.newSku != null">sku,</if>
-            <if test="item.color != null">color,</if>
-            <if test="item.stock != null">stock</if>
+            <if test="newSku != null">sku,</if>
+            <if test="color != null">color,</if>
+            <if test="stock != null">stock</if>
         </trim>
     </sql>
 
     <sql id="ValuesList">
         <trim suffixOverrides=",">
-            <if test="item.newSku != null">#{item.newSku},</if>
-            <if test="item.color != null">#{item.color},</if>
-            <if test="item.newStock != null">#{item.newStock}</if>
+            <if test="newSku != null || newSku != ''">#{newSku},</if>
+            <if test="color != null || color != ''">#{color},</if>
+            <if test="newStock != null || newStock != ''">#{newStock}</if>
         </trim>
     </sql>
 
     <!--测试动态批量插入成功,注意application.yml数据库设置要加上&allowMultiQueries=true,否者提示SQLSyntaxErrorException-->
     <insert id="insertStock" parameterType="Stock" useGeneratedKeys="true">
-        <foreach item="item" index="index" collection="list" separator=";">
             insert into stock (<include refid="ColumnsList"/>)
             VALUES(<include refid="ValuesList"/>)
-        </foreach>
     </insert>
 
 
     <update id="updateStock" parameterType="com.example.freight.domain.Stock">
-        <foreach collection="list" item="item" index="index" open="" close="" separator=";">
             update stock
             <set>
-                <if test="item.newStock != null">stock=#{item.newStock}</if>
+                <if test="newStock != null">stock=#{newStock}</if>
             </set>
-            where sku = #{item.newSku} and color = #{item.color}
-        </foreach>
+            where sku = #{newSku} and color = #{color}
     </update>
 
     <select id="selectStock" parameterType="Stock" resultType="Stock">

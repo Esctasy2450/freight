@@ -17,12 +17,12 @@ public interface StockMapper {
     /**
      * 根据型号和颜色 更新 库存
      * */
-    void updateStock(List<Domains> list);
+    boolean updateStock(Domains domains);
 
     /**
      * 根据型号和颜色 新增 库存
      * */
-    void insertStock(List<Domains> list);
+    boolean insertStock(Domains domains);
 
     /**
      * 根据通用型号查询所有颜色及库存
